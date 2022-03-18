@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+
+  {{project_name|lower}}:
+    environment:
+      - SQS_QUEUE_PRODUCE=http://localstack:4566/000000000000/{{inputs.sqs_producer_queue_name}}
+      - AWS_ACCESS_KEY_ID=FAKE
+      - AWS_SECRET_KEY=FAKE
+    depends_on:
+      - localstack
+    volumes:
+      - ./wait-for.sh:/opt/app/wait-for.sh
+    entrypoint: call_wait_for_here
+
+  localstack:
+    image: localstack/localstack
+    ports:
+      - '4566:4566'
+    volumes:
+      - ./sqs-init.sh:/docker-entrypoint-initaws.d/sqs-init.sh

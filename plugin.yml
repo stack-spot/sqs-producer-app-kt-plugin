@@ -6,11 +6,27 @@ tags:
   - sqs
   - producer
 inputs:
-  - label: "AWS region: "
+  - label: "Producer queue name: "
     type: text
-    name: "aws_region"
-    default: "us-east-1"
-  
-  - label: "Producer Queue url: "
-    type: text
-    name: "sqs_producer_queue_url"
+    name: "sqs_producer_queue_name"
+
+computedInputs: 
+  camel_queue_name: "{{sqs_producer_queue_name|to_camel}}"
+
+hooks:  
+  - type: edit
+    trigger: after-render
+    path: infra/src/main/kotlin/{{project_group_id|group_id_folder}}/{{project_name|to_camel}}CdkStack.kt
+    changes:
+      - search:
+          pattern: 'init\s?{'
+          insert-after:
+            value: "        val sqsProducerNestedStack = Sqs{{computed_inputs.camel_queue_name}}NestedStack(this, \"Sqs{{computed_inputs.camel_queue_name}}NestedStack\", stageObject)\n"
+          when:
+            not-exists: "val sqsProducerNestedStack = Sqs{{computed_inputs.camel_queue_name}}NestedStack(this, \"Sqs{{computed_inputs.camel_queue_name}}NestedStack\", stageObject)"
+      - search:
+          string: 'val accountRole ='
+          insert-after:
+            value: "        sqsProducerNestedStack.queue.grantSendMessages(accountRole)\n"
+          when:
+            not-exists: "sqsProducerNestedStack.queue.grantSendMessages(accountRole)"
