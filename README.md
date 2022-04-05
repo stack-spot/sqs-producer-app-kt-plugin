@@ -29,7 +29,7 @@ Ao aplicar o plugin, serão adicionados os recursos necessários para que seja p
 
 Para aplicar o plugin, primeiramente é necessário ter executado os passos do [Pré-requisitos](#Pré-requisitos). Após isso, crie sua a aplicação utilizando o CLI da StackSpot, acesse a pasta raiz do projeto e execute o comando abaixo para aplicar o plugin:
  
-`os apply plugin zup-kotlin-stack/sqs-producer-app-kt-plugin`
+`stk apply plugin zup-kotlin-stack/sqs-producer-app-kt-plugin`
 
 
 ## **Configuração**
